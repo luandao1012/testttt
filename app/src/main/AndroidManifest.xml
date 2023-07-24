@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -17,8 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Testtt"
         tools:targetApi="31">
-        <service android:name=".MyWidgetService"
+        <service
+            android:name=".MyWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true" />
         <receiver
             android:name=".NewAppWidget"
             android:exported="false">

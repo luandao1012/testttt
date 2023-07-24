@@ -2,6 +2,7 @@ package com.anondev.testtt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyWidgetService extends RemoteViewsService {
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new MyWidgetFactory(this.getApplicationContext(), intent);
@@ -21,9 +23,11 @@ public class MyWidgetService extends RemoteViewsService {
     class MyWidgetFactory implements RemoteViewsFactory {
         private List<String> list = new ArrayList<>();
         Context mContext;
+        int test = 0;
 
         public MyWidgetFactory(Context mContext, Intent intent) {
             this.mContext = mContext;
+            test = intent.getIntExtra("test", -1);
         }
 
         @Override
@@ -77,9 +81,8 @@ public class MyWidgetService extends RemoteViewsService {
         private void initData() {
             list.clear();
             for (int i = 1; i <= 15; i++) {
-                list.add("ListView item " + i);
+                list.add("ListView item " + test);
             }
-
         }
     }
 }

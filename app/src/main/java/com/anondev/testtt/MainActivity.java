@@ -6,9 +6,15 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ContentInfoCompat;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,12 +24,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.anondev.testtt.databinding.ActivityMainBinding;
 import com.anondev.testtt.databinding.LayoutDialogBinding;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,38 +40,58 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private Uri image;
     private Adapter adapter;
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        adapter = new Adapter();
-        List<String> list = new ArrayList<>();
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        list.add("A");
-        adapter.list = list;
-        binding.rv.setAdapter(adapter);
+        binding.tvTime.setOnClickListener(view -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker timePicker, int h, int m) {
+                    calendar.set(Calendar.HOUR_OF_DAY, h);
+                    calendar.set(Calendar.MINUTE, m);
+                    setAlarm(calendar.getTimeInMillis());
+                }
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+            timePickerDialog.show();
+        });
+//        adapter = new Adapter();
+//        List<String> list = new ArrayList<>();
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        list.add("A");
+//        adapter.list = list;
+//        binding.rv.setAdapter(adapter);
 //        initViews();
 //        initListeners();
+    }
+
+    private void setAlarm(long time) {
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.setAction(AlarmReceiver.ALARM_REMINDER);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
 
     private void initViews() {
