@@ -12,17 +12,18 @@ import android.widget.RemoteViews;
  * Implementation of App Widget functionality.
  */
 public class NewAppWidget extends AppWidgetProvider {
+    int test = 0;
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (intent.getAction().equals("test")) {
-            int i = intent.getIntExtra("test", -1);
+            test = intent.getIntExtra("test", -1);
             ComponentName componentName = new ComponentName(context, NewAppWidget.class);
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
             for (int appWidgetId : appWidgetIds) {
                 Intent newIntent = new Intent(context, MyWidgetService.class);
-                newIntent.putExtra("test", 2);
+                newIntent.putExtra("test", -2);
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
                 views.setRemoteAdapter(R.id.list_view, newIntent);
                 views.setEmptyView(R.id.list_view, R.id.empty_view);
@@ -38,10 +39,11 @@ public class NewAppWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             Intent intent = new Intent(context, MyWidgetService.class);
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
+            intent.putExtra("test", 5);
             views.setRemoteAdapter(R.id.list_view, intent);
             views.setEmptyView(R.id.list_view, R.id.empty_view);
             appWidgetManager.updateAppWidget(appWidgetId, views);
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view);
+           appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view);
         }
     }
 

@@ -33,7 +33,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             notificationManager.notify(11, builder.build());
             Intent newIntent1 = new Intent(context, NewAppWidget.class);
             newIntent1.setAction("test");
-            newIntent1.putExtra("test", 1);
+            newIntent1.putExtra("test", 4);
             context.sendBroadcast(newIntent1);
         }
     }

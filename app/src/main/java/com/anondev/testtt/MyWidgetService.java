@@ -28,6 +28,7 @@ public class MyWidgetService extends RemoteViewsService {
         public MyWidgetFactory(Context mContext, Intent intent) {
             this.mContext = mContext;
             test = intent.getIntExtra("test", -1);
+            Log.d("test123", test + "");
         }
 
         @Override
@@ -38,6 +39,7 @@ public class MyWidgetService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
             initData();
+            Log.d("test123", test + "");
         }
 
         @Override
