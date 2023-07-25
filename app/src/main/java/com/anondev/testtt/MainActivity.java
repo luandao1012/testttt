@@ -1,168 +1,97 @@
 package com.anondev.testtt;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ContentInfoCompat;
-
-import android.Manifest;
-import android.app.AlarmManager;
-import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TimePicker;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.anondev.testtt.databinding.ActivityMainBinding;
-import com.anondev.testtt.databinding.LayoutDialogBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewItemTouchHelper.SwipedCallback {
     private static final int SELECT_PICTURE = 111;
     private static final int CODE_READ_DATE = 1111;
     private ActivityMainBinding binding;
-    private Uri image;
     private Adapter adapter;
-    private Calendar calendar = Calendar.getInstance();
+    private List<Item> list;
+    private List<String> listStrings;
+    private ItemTouchHelper.SimpleCallback itemTouchHelper;
+    private Snackbar snackbar;
+    private List<Integer> posList;
+    private List<Item> objectList;
+    private int num = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        binding.tvTime.setOnClickListener(view -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker timePicker, int h, int m) {
-                    calendar.set(Calendar.HOUR_OF_DAY, h);
-                    calendar.set(Calendar.MINUTE, m);
-                    setAlarm(calendar.getTimeInMillis());
-                }
-            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
-            timePickerDialog.show();
-        });
-//        adapter = new Adapter();
-//        List<String> list = new ArrayList<>();
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        list.add("A");
-//        adapter.list = list;
-//        binding.rv.setAdapter(adapter);
-//        initViews();
-//        initListeners();
-    }
-
-    private void setAlarm(long time) {
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.setAction(AlarmReceiver.ALARM_REMINDER);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+        initViews();
+        initListeners();
     }
 
     private void initViews() {
+        adapter = new Adapter();
+        list = new ArrayList<>();
+        posList = new ArrayList<>();
+        objectList = new ArrayList<>();
+        listStrings = new ArrayList<>();
+        listStrings.add("A");
+        listStrings.add("A");
+        listStrings.add("A");
+        listStrings.add("A");
+        listStrings.add("A");
+        list.add(new Item("A", listStrings));
+        list.add(new Item("A", listStrings));
+        list.add(new Item("A", listStrings));
+        list.add(new Item("A", listStrings));
+        list.add(new Item("A", listStrings));
+        adapter.setData(list);
+        binding.rv.setAdapter(adapter);
+        itemTouchHelper = new RecyclerViewItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(binding.rv);
     }
 
     private void initListeners() {
-//        binding.btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-//                    selectImage();
-//                } else {
-//                    requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-//                }
-//            }
-//        });
-//        binding.iv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showImage();
-//            }
-//        });
-    }
-
-    private Boolean checkPermission(String permission) {
-        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission(String permission) {
-        ActivityCompat.requestPermissions(this, new String[]{permission}, CODE_READ_DATE);
-    }
-
-    private void selectImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, SELECT_PICTURE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && data != null) {
-            image = data.getData();
-//            binding.iv.setImageURI(image);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CODE_READ_DATE) {
-            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                selectImage();
-            } else {
-                Toast.makeText(this, "Không có quyền truy cập", Toast.LENGTH_SHORT).show();
+        snackbar = Snackbar.make(binding.getRoot(), "Xoa " + num + " item", Snackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.setAction("Hoàn tác", view -> {
+            for (int i = 0; i < posList.size(); i++) {
+                list.add(posList.get(i), objectList.get(i));
+                adapter.notifyItemInserted(posList.get(i));
             }
-        }
-    }
-
-    private void showImage() {
-        Dialog dialog = new Dialog(MainActivity.this);
-        LayoutDialogBinding dialogBinding = LayoutDialogBinding.inflate(LayoutInflater.from(MainActivity.this), null, false);
-        dialog.setContentView(dialogBinding.getRoot());
-        dialogBinding.iv.setImageURI(image);
-        dialog.show();
-        dialogBinding.btn.setOnClickListener(new View.OnClickListener() {
+            num = 0;
+            posList.clear();
+            objectList.clear();
+        });
+        snackbar.addCallback(new Snackbar.Callback() {
             @Override
-            public void onClick(View view) {
-                dialog.dismiss();
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT || event == Snackbar.Callback.DISMISS_EVENT_SWIPE) {
+                    num = 0;
+                    Log.d("test123", "onDismissed: ");
+                }
             }
         });
+    }
+
+    @Override
+    public void setSwipedListener(RecyclerView.ViewHolder viewHolder) {
+        int pos = viewHolder.getAdapterPosition();
+        num++;
+        posList.add(pos);
+        objectList.add(list.get(pos));
+        list.remove(pos);
+        adapter.notifyItemRemoved(pos);
+        snackbar.setText("Xoa " + num + " item");
+        snackbar.show();
     }
 }
