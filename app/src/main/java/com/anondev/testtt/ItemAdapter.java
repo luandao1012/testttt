@@ -45,7 +45,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.SubViewHolder>
 
         public void bind(int pos) {
             binding.tvSub.setText(list.get(pos));
-            Log.d("test123", binding.getRoot().getWidth() + "");
             ObjectAnimator animator = ObjectAnimator.ofFloat(binding.getRoot(), "translationX", width - 200, 0f);
             animator.setDuration(500);
             //animator.setInterpolator(new OvershootInterpolator());

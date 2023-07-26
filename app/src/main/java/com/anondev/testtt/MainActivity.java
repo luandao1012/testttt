@@ -13,7 +13,11 @@ import com.anondev.testtt.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewItemTouchHelper.SwipedCallback {
     private static final int SELECT_PICTURE = 111;
@@ -21,11 +25,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemT
     private ActivityMainBinding binding;
     private Adapter adapter;
     private List<Item> list;
+    private List<Item> listBackup;
     private List<String> listStrings;
     private ItemTouchHelper.SimpleCallback itemTouchHelper;
     private Snackbar snackbar;
-    private List<Integer> posList;
-    private List<Item> objectList;
+    private Map<Integer, Item> objectMap;
     private int num = 0;
 
     @Override
@@ -40,19 +44,20 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemT
     private void initViews() {
         adapter = new Adapter();
         list = new ArrayList<>();
-        posList = new ArrayList<>();
-        objectList = new ArrayList<>();
+        objectMap = new TreeMap<>();
         listStrings = new ArrayList<>();
+        listBackup = new ArrayList<>();
         listStrings.add("A");
         listStrings.add("A");
         listStrings.add("A");
         listStrings.add("A");
         listStrings.add("A");
         list.add(new Item("A", listStrings));
-        list.add(new Item("A", listStrings));
-        list.add(new Item("A", listStrings));
-        list.add(new Item("A", listStrings));
-        list.add(new Item("A", listStrings));
+        list.add(new Item("B", listStrings));
+        list.add(new Item("C", listStrings));
+        list.add(new Item("D", listStrings));
+        list.add(new Item("E", listStrings));
+        listBackup.addAll(list);
         adapter.setData(list);
         binding.rv.setAdapter(adapter);
         itemTouchHelper = new RecyclerViewItemTouchHelper(0, ItemTouchHelper.LEFT, this);
@@ -63,13 +68,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemT
         snackbar = Snackbar.make(binding.getRoot(), "Xoa " + num + " item", Snackbar.LENGTH_LONG);
         snackbar.setActionTextColor(Color.YELLOW);
         snackbar.setAction("Hoàn tác", view -> {
-            for (int i = 0; i < posList.size(); i++) {
-                list.add(posList.get(i), objectList.get(i));
-                adapter.notifyItemInserted(posList.get(i));
+            for (Map.Entry<Integer, Item> entry : objectMap.entrySet()) {
+                list.add(entry.getKey(), entry.getValue());
+                adapter.notifyItemInserted(entry.getKey());
             }
+            objectMap.clear();
             num = 0;
-            posList.clear();
-            objectList.clear();
         });
         snackbar.addCallback(new Snackbar.Callback() {
             @Override
@@ -86,9 +90,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemT
     @Override
     public void setSwipedListener(RecyclerView.ViewHolder viewHolder) {
         int pos = viewHolder.getAdapterPosition();
+        Item item = list.get(pos);
+        int position = listBackup.indexOf(item);
         num++;
-        posList.add(pos);
-        objectList.add(list.get(pos));
+        objectMap.put(position, item);
         list.remove(pos);
         adapter.notifyItemRemoved(pos);
         snackbar.setText("Xoa " + num + " item");

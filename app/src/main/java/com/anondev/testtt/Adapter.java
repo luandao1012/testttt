@@ -72,30 +72,30 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ItemViewHolder> {
         }
 
         public void bindListeners() {
-            binding.iv.setOnClickListener(view -> {
-                if (!isShow) {
-                    ObjectAnimator animator = ObjectAnimator.ofFloat(binding.iv, "rotation", 0f, 180f);
-                    animator.setDuration(500);
-                    // animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                    animator.start();
-                    binding.recycler.setVisibility(View.VISIBLE);
-                    itemAdapter = new ItemAdapter();
-                    itemAdapter.width = binding.getRoot().getWidth();
-                    itemAdapter.list = list.get(getAdapterPosition()).getList();
-                    binding.recycler.setAdapter(itemAdapter);
-                    isShow = true;
-                } else {
-                    ObjectAnimator animator = ObjectAnimator.ofFloat(binding.iv, "rotation", 180f, 0f);
-                    animator.setDuration(500);
-                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                    animator.start();
-                    binding.recycler.setVisibility(View.GONE);
-                    itemAdapter = new ItemAdapter();
-                    itemAdapter.list = list.get(getAdapterPosition()).getList();
-                    binding.recycler.setAdapter(itemAdapter);
-                    isShow = false;
-                }
-            });
+//            binding.iv.setOnClickListener(view -> {
+//                if (!isShow) {
+//                    ObjectAnimator animator = ObjectAnimator.ofFloat(binding.iv, "rotation", 0f, 180f);
+//                    animator.setDuration(500);
+//                    // animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//                    animator.start();
+//                    binding.recycler.setVisibility(View.VISIBLE);
+//                    itemAdapter = new ItemAdapter();
+//                    itemAdapter.width = binding.getRoot().getWidth();
+//                    itemAdapter.list = list.get(getAdapterPosition()).getList();
+//                    binding.recycler.setAdapter(itemAdapter);
+//                    isShow = true;
+//                } else {
+//                    ObjectAnimator animator = ObjectAnimator.ofFloat(binding.iv, "rotation", 180f, 0f);
+//                    animator.setDuration(500);
+//                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//                    animator.start();
+//                    binding.recycler.setVisibility(View.GONE);
+//                    itemAdapter = new ItemAdapter();
+//                    itemAdapter.list = list.get(getAdapterPosition()).getList();
+//                    binding.recycler.setAdapter(itemAdapter);
+//                    isShow = false;
+//                }
+//            });
         }
 
         public View getView() {
